@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import argparse
 import sys
-
+import time
 
 def getCleanProductName(productName):
     """Strips the mark tags from the input string if exists
@@ -158,9 +158,8 @@ def main():
     #Asserting the values
     assert '1 item.' in cart.get_attribute('innerHTML')
     assert newProductName in cartItemInfo.get_attribute('innerHTML')
-
-    # tear down>> Click Remove Button
-    removeButton= WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"button[class='btn-fake-link font-semibold m-margin-left js-cart-item-remove']")))
+    
+    removeButton=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"button[class='btn-fake-link font-semibold m-margin-left js-cart-item-remove']")))
     removeButton.click()
     driver.implicitly_wait(15)
 
@@ -169,7 +168,3 @@ def main():
 
 # Main Method Call
 if __name__== '__main__': main()
-
-
-
-
