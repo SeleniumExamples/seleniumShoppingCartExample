@@ -82,7 +82,7 @@ def main():
     
     allProducts = header.find_elements_by_css_selector("div[class='js-tile js-tile-landscape tile-landscape']")
     #Selecting the first product from the list
-    productSelected = allProducts[0]
+    productSelected = allProducts[1]
     productImageLink= productSelected.find_element_by_class_name("js-product-title")
     
     #getting the  name of the product
@@ -98,12 +98,11 @@ def main():
     try:
         outOfStockLabel= WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"p[class='price-oos']")))
         print 'out of stock'
-        driver.close()
-        sys.exit(1)
-    except :
-        print ''
+        driver.quit()
     
-    #
+    except :
+       print 'In stock' 
+
     #User Navigated to the first next page and Handling the zipcode pop up if exists
     try:
         zipcodeTextfield=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"input[name='zipcode']")))
