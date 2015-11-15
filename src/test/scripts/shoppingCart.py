@@ -9,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import argparse
 import sys
-import time
 
 def getCleanProductName(productName):
     """Strips the mark tags from the input string if exists
@@ -81,8 +80,8 @@ def main():
     header=WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"div[id='tile-container']")))
     
     allProducts = header.find_elements_by_css_selector("div[class='js-tile js-tile-landscape tile-landscape']")
-    #Selecting the first product from the list
-    productSelected = allProducts[1]
+    #Selecting the first  product from the list
+    productSelected = allProducts[0]
     productImageLink= productSelected.find_element_by_class_name("js-product-title")
     
     #getting the  name of the product
@@ -138,8 +137,8 @@ def main():
         print 'no second zipcode pop up'
         
     #Locating and clicking Add to Cart Button
-    cartButton= driver.find_element_by_id('WMItemAddToCartBtn')
-    cartButton.click()
+    addToCartButton= driver.find_element_by_id('WMItemAddToCartBtn')
+    addToCartButton.click()
 
   
     #Closing the popup window after item added to shopping cart
@@ -148,7 +147,7 @@ def main():
 
 
     #Locating and navigating to Shopping cart
-    shoppingCartButton= WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"a[href='https://www.walmart.com/cart/']")))
+    shoppingCartButton= WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"i[class='wmicon wmicon-cart']")))
     shoppingCartButton.click()
     
 
