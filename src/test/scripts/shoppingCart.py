@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import argparse
+import sys
+
 
 def getCleanProductName(productName):
     """Strips the mark tags from the input string if exists
@@ -44,6 +46,7 @@ def main():
         print 'Title Not found'
 
     # Sign Up Pop Up window Handling
+   
     popUpDialogCloseButton=driver.find_element_by_xpath("//div[contains(@class,'Modal-outer js-responsive-modal-outer')]//button")
     if popUpDialogCloseButton.is_displayed():
         popUpDialogCloseButton.click()
@@ -76,7 +79,7 @@ def main():
     
     #Locate the entire list of search items to appear
     header=WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"div[id='tile-container']")))
-    #
+    
     allProducts = header.find_elements_by_css_selector("div[class='js-tile js-tile-landscape tile-landscape']")
     #Selecting the first product from the list
     productSelected = allProducts[0]
@@ -90,31 +93,51 @@ def main():
     #Click the Product Image Link
     productImageLink.click() 
     
-    #User Navigated to the first next page and wait for the zipcode pop up to appear
-    zipcodeTextfield=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"input[name='zipcode']")))
-    #Type the Zipcode in zicode text field
-    zipcodeTextfield.send_keys("94087")
-
-    #Locating and clicking the Check Button
-    checkButton=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"button[class='btn btn-mini  js-cell-coverage-check-btn']")))
-    checkButton.click()
-
+    #Handling out of stock Item
+    #out of stock
+    try:
+        outOfStockLabel= WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"p[class='price-oos']")))
+        print 'out of stock'
+        driver.close()
+        sys.exit(1)
+    except :
+        print ''
     
-    #Locating and closing  the zipcode popup
-    closeButton= driver.find_element_by_xpath("//div[contains(@class,'js-flyout-modal flyout-modal flyout-modal-wide')]//button")
-    closeButton.click()
+    #
+    #User Navigated to the first next page and Handling the zipcode pop up if exists
+    try:
+        zipcodeTextfield=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"input[name='zipcode']")))
+        #Type the Zipcode in zicode text field
+        zipcodeTextfield.send_keys("94087")
 
-
-    #select color
-    colorList=driver.find_element_by_css_selector("div[class='variants variants-swatches js-variants-swatches js-variants-collapsed variants-collapsed']")
-    colorChild=colorList.find_elements_by_css_selector("span[class='js-variant-swatch-container variant-swatch-container']")
-    colorChild[0].click()
+        #Locating and clicking the Check Button
+        checkButton=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"button[class='btn btn-mini  js-cell-coverage-check-btn']")))
+        checkButton.click()
+        #Locating and closing  the zipcode popup
     
-    #Locating and closing Zipcode pop up window
-    zipcodeTextfield=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"input[name='zipcode']")))
-    zipcodeTextfield.send_keys("94087")
+        closeButton = driver.find_element_by_xpath("//div[contains(@class,'js-flyout-modal flyout-modal flyout-modal-wide')]//button")
+    
+        closeButton.click()
+    except:
+        print 'No zipcode'
 
+    #Selecting a color field if exists.
+    try:
+        
+        colorList=driver.find_element_by_css_selector("div[class='variants variants-swatches js-variants-swatches js-variants-collapsed variants-collapsed']")
+        colorChild=colorList.find_elements_by_css_selector("span[class='js-variant-swatch-container variant-swatch-container']")
+        colorChild[0].click() #Selecting the first color
+    except:
+        print ' no color option'
+    
+    #Locating and closing Zipcode pop up window second time
+    try:
+        zipcodeTextfield=WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,"input[name='zipcode']")))
+        zipcodeTextfield.send_keys("94087")
 
+    except:
+        print 'no second zipcode pop up'
+        
     #Locating and clicking Add to Cart Button
     cartButton= driver.find_element_by_id('WMItemAddToCartBtn')
     cartButton.click()
